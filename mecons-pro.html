@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEcons Pro — M&E Engineering Consultant System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0A1628;--navy2:#112240;--navy3:#1B3059;
+  --blue:#1E5FBD;--blue2:#2E74D8;--blue3:#4A8FEE;--blue4:#EBF5FF;
+  --steel:#7B8FA6;--steel2:#9FB3C8;--steel3:#C5D5E4;
+  --silver:#EBF0F5;--white:#F7F9FC;
+  --accent:#00C9A7;--accent2:#FF6B35;--accent3:#FFB800;
+  --text:#0A1628;--text2:#3D5166;--text3:#7B8FA6;
+  --border:#D0DCE8;--surface:#FFFFFF;--bg:#F0F4F8;
+  --success:#00B57A;--success-bg:#E8FFF6;
+  --warning:#F59E0B;--warning-bg:#FFF8E1;
+  --danger:#EF4444;--danger-bg:#FEE2E2;
+  --font:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --r:6px;--r2:10px;--r3:16px;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;overflow:hidden;height:100vh;display:flex}
+.sidebar{width:216px;min-width:216px;background:var(--navy);display:flex;flex-direction:column;height:100vh;z-index:10}
+.logo{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.logo-mark{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.logo-icon{width:28px;height:28px;background:var(--blue2);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:15px;height:15px;fill:white}
+.logo-name{font-size:13px;font-weight:600;color:#fff}
+.logo-sub{font-size:9.5px;color:var(--steel2);letter-spacing:0.06em;text-transform:uppercase;margin-left:36px}
+.nav{flex:1;overflow-y:auto;padding:6px 0;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-section{padding:14px 13px 4px;font-size:9px;font-weight:600;color:rgba(255,255,255,0.22);letter-spacing:0.1em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:all 0.15s;color:var(--steel2);font-size:12px;margin:1px 7px;border-radius:var(--r)}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
+.nav-item.active{background:var(--blue);color:#fff}
+.nav-item .ni{width:15px;height:15px;opacity:0.7;flex-shrink:0}
+.nav-item.active .ni{opacity:1}
+.nav-badge{margin-left:auto;background:var(--accent2);color:#fff;font-size:9px;font-weight:600;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+.nav-item.active .nav-badge{background:rgba(255,255,255,0.25)}
+.sidebar-bottom{padding:10px 7px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-card{display:flex;align-items:center;gap:8px;padding:8px;border-radius:var(--r);cursor:pointer}
+.user-card:hover{background:rgba(255,255,255,0.07)}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;height:50px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.page-title{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.topbar-right{display:flex;align-items:center;gap:7px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all 0.15s;font-family:var(--font)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue2)}
+.btn-ghost{background:transparent;color:var(--text2);border-color:var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10.5px}
+.search-box{display:flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:5px 9px;width:190px}
+.search-box input{border:none;background:transparent;font-size:12px;color:var(--text);outline:none;width:100%;font-family:var(--font)}
+.search-box input::placeholder{color:var(--text3)}
+.icon-btn{width:30px;height:30px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all 0.15s}
+.icon-btn:hover{background:var(--silver)}
+.notif-dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;position:absolute;top:5px;right:5px;border:1.5px solid white}
+.content{flex:1;overflow-y:auto;padding:18px}
+.page{display:none}
+.page.active{display:block}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-size:12.5px;font-weight:600;color:var(--text)}
+.card-action{font-size:11px;color:var(--blue);cursor:pointer;font-weight:500}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.green::before{background:var(--success)}
+.kpi-card.amber::before{background:var(--warning)}
+.kpi-card.red::before{background:var(--danger)}
+.kpi-card.purple::before{background:#7C3AED}
+.kpi-label{font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.kpi-value{font-size:22px;font-weight:600;color:var(--text);line-height:1;margin-bottom:3px;font-family:var(--mono)}
+.kpi-sub{font-size:10.5px;color:var(--text3);display:flex;align-items:center;gap:3px}
+.kpi-up{color:var(--success)}.kpi-dn{color:var(--danger)}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
+.badge-blue{background:var(--blue4);color:var(--blue)}
+.badge-green{background:var(--success-bg);color:var(--success)}
+.badge-amber{background:var(--warning-bg);color:var(--warning)}
+.badge-red{background:var(--danger-bg);color:var(--danger)}
+.badge-gray{background:var(--silver);color:var(--text3)}
+.badge-purple{background:#F3F0FF;color:#6B46C1}
+.tabs{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:16px}
+.tab{padding:9px 14px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all 0.15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.pill-tabs{display:flex;gap:4px;background:var(--bg);padding:3px;border-radius:var(--r2);border:1px solid var(--border);margin-bottom:14px}
+.pill-tab{flex:1;padding:6px 10px;border-radius:var(--r);font-size:11.5px;font-weight:500;cursor:pointer;text-align:center;color:var(--text3);transition:all 0.15s}
+.pill-tab.active{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.prog-bar{height:5px;background:var(--silver);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:var(--blue);transition:width 0.4s}
+.prog-fill.g{background:var(--success)}
+.prog-fill.a{background:var(--warning)}
+.prog-fill.r{background:var(--danger)}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;padding:9px 12px;border-bottom:1.5px solid var(--border);background:var(--bg);white-space:nowrap}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--silver);font-size:12px;color:var(--text);vertical-align:middle}
+.data-table tr:hover td{background:var(--bg)}
+.data-table tr:last-child td{border-bottom:none}
+.form-group{margin-bottom:10px}
+.form-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);background:var(--surface);outline:none;font-family:var(--font);transition:border 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--blue3)}
+.form-textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.modal-overlay{position:fixed;inset:0;background:rgba(10,22,40,0.45);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal{background:var(--surface);border-radius:var(--r3);width:520px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(10,22,40,0.25)}
+.modal-header{padding:18px 20px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.modal-title{font-size:14px;font-weight:600;color:var(--text)}
+.modal-close{width:26px;height:26px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text3);line-height:1}
+.modal-body{padding:0 20px 20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.detail-row{display:flex;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--silver)}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-size:11.5px;color:var(--text3);width:140px;flex-shrink:0;font-weight:500}
+.detail-val{font-size:12px;color:var(--text);flex:1}
+.metric-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--silver)}
+.metric-row:last-child{border-bottom:none}
+.metric-label{font-size:11.5px;color:var(--text2)}
+.metric-val{font-size:12px;font-weight:600;color:var(--text);font-family:var(--mono)}
+.gauge-track{height:8px;background:var(--silver);border-radius:4px;overflow:hidden;margin-bottom:6px}
+.gauge-fill{height:100%;border-radius:4px;transition:width 0.4s}
+.gauge-markers{display:flex;justify-content:space-between;font-size:9.5px;color:var(--text3);font-family:var(--mono)}
+.risk-cell{height:36px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.rc-low{background:#E8FFF6;color:var(--success)}
+.rc-med{background:#FFF8E1;color:var(--warning)}
+.rc-hi{background:#FEE2E2;color:var(--danger)}
+.rc-cr{background:var(--danger);color:#fff}
+.checklist-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--silver);cursor:pointer}
+.checklist-item:last-child{border-bottom:none}
+.check-box{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.check-box.done{background:var(--success);border-color:var(--success)}
+.check-text{font-size:12px;color:var(--text2);flex:1}
+.check-text.done{text-decoration:line-through;color:var(--text3)}
+.inv-header{background:var(--navy);border-radius:var(--r2) var(--r2) 0 0;padding:20px;color:#fff}
+.inv-body{border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r2) var(--r2);padding:0}
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;padding:10px 14px;border-bottom:1.5px solid var(--border);background:var(--bg);text-align:left}
+.inv-table td{padding:10px 14px;border-bottom:1px solid var(--silver);font-size:12px}
+.inv-total-row{background:var(--bg)}
+.notif-panel{position:fixed;top:50px;right:18px;width:300px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);box-shadow:0 8px 24px rgba(10,22,40,0.15);z-index:50;display:none}
+.notif-panel.open{display:block}
+.notif-header{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.notif-item{padding:10px 14px;border-bottom:1px solid var(--silver);display:flex;gap:10px;cursor:pointer}
+.notif-item:hover{background:var(--bg)}
+.notif-item:last-child{border-bottom:none}
+.notif-dot-big{width:34px;height:34px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.notif-text{font-size:11.5px;color:var(--text2);line-height:1.4}
+.notif-time{font-size:10px;color:var(--text3);margin-top:2px}
+.mini-bars{display:flex;align-items:flex-end;gap:3px;height:40px}
+.mini-bar{flex:1;border-radius:2px 2px 0 0;background:var(--blue3);min-height:4px}
+.mini-bar.accent{background:var(--blue)}
+.filter-chip{padding:5px 11px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text2);transition:all 0.15s;font-weight:500}
+.filter-chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:var(--r2);font-size:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:200;display:none;align-items:center;gap:8px;animation:slideUp 0.3s ease}
+.toast.show{display:flex}
+@keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--steel3);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18L20 8.5V15l-8 4-8-4V8.5l8-4.32z"/><circle cx="12" cy="12" r="2.5"/></svg>
+      </div>
+      <span class="logo-name">MEcons Pro</span>
+    </div>
+    <div class="logo-sub">M&E Engineering Suite</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="go('dashboard',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard
+    </div>
+    <div class="nav-section">Proyek</div>
+    <div class="nav-item" onclick="go('projects',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>Daftar Proyek<span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="go('detail',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Detail Proyek
+    </div>
+    <div class="nav-item" onclick="go('gantt',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="12" height="4" rx="1"/><rect x="3" y="16" width="15" height="4" rx="1"/></svg>Timeline Gantt
+    </div>
+    <div class="nav-item" onclick="go('budget',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Budget & Invoice
+    </div>
+    <div class="nav-section">Tim & Klien</div>
+    <div class="nav-item" onclick="go('clients',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Klien & Lead<span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="go('schedule',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Jadwal Tim
+    </div>
+    <div class="nav-section">Engineering</div>
+    <div class="nav-item" onclick="go('calc',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>Kalkulator
+    </div>
+    <div class="nav-item" onclick="go('docs',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Dokumen
+    </div>
+    <div class="nav-item" onclick="go('risk',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Risk Register
+    </div>
+    <div class="nav-section">Laporan</div>
+    <div class="nav-item" onclick="go('analytics',this)">
+      <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Analytics
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="avatar" style="background:var(--blue2)">IR</div>
+      <div>
+        <div style="font-size:11.5px;font-weight:500;color:#fff">Ir. Rizky Pratama</div>
+        <div style="font-size:10px;color:var(--steel2)">Principal Engineer</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="topbar-right">
+      <div class="search-box">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9FB3C8" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input placeholder="Cari proyek, klien...">
+      </div>
+      <div class="icon-btn" onclick="toggleNotif()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7B8FA6" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" id="ctaBtn" onclick="handleCTA()">+ Proyek Baru</button>
+    </div>
+  </div>
+  <div class="content" id="mainContent"></div>
+</div>
+
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">Notifikasi<span style="font-size:10px;color:var(--blue);cursor:pointer" onclick="toggleNotif()">Tutup</span></div>
+  <div class="notif-item"><div class="notif-dot-big" style="background:var(--warning-bg)">⚠️</div><div><div class="notif-text">Budget Karawang Phase 2 mencapai 89%</div><div class="notif-time">09:15 hari ini</div></div></div>
+  <div class="notif-item"><div class="notif-dot-big" style="background:var(--danger-bg)">🔴</div><div><div class="notif-text">Invoice #INV-028 Pemkot Surabaya overdue</div><div class="notif-time">08:00 hari ini</div></div></div>
+  <div class="notif-item"><div class="notif-dot-big" style="background:var(--blue4)">📋</div><div><div class="notif-text">RFI #034 RSUD Surabaya jatuh tempo 20 Mar</div><div class="notif-time">Kemarin 16:00</div></div></div>
+  <div class="notif-item"><div class="notif-dot-big" style="background:var(--success-bg)">✅</div><div><div class="notif-text">Commissioning Solar MM2100 divalidasi</div><div class="notif-time">Kemarin 12:30</div></div></div>
+</div>
+
+<div class="modal-overlay" id="newProjectModal" style="display:none" onclick="closeModal('newProjectModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><div class="modal-title">Tambah Proyek Baru</div><div class="modal-close" onclick="closeModal('newProjectModal')">×</div></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Nama Proyek *</label><input class="form-input" placeholder="mis. Gedung X — Sistem HVAC"></div><div class="form-group"><label class="form-label">Kode Proyek</label><input class="form-input" placeholder="PRJ-2025-013"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Klien *</label><select class="form-select"><option>PT Graha Sentosa</option><option>PT Indosurya Mfg</option><option>Pemkot Surabaya</option><option>Klien Baru...</option></select></div><div class="form-group"><label class="form-label">Disiplin *</label><select class="form-select"><option>Mechanical</option><option>Electrical</option><option>M&E (Keduanya)</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Nilai Kontrak (Rp)</label><input class="form-input" type="number" placeholder="5000000000"></div><div class="form-group"><label class="form-label">Project Manager</label><select class="form-select"><option>Ir. Budi Santoso, MT</option><option>Ir. Dewi Anggraeni</option><option>Ir. Anton Hidayat</option><option>Ir. Sarah Wijaya</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Tanggal Mulai</label><input class="form-input" type="date" value="2025-03-17"></div><div class="form-group"><label class="form-label">Target Selesai</label><input class="form-input" type="date" value="2025-12-31"></div></div>
+      <div class="form-group"><label class="form-label">Lingkup Pekerjaan</label><textarea class="form-textarea" placeholder="Jelaskan lingkup pekerjaan..."></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('newProjectModal')">Batal</button><button class="btn btn-primary" onclick="saveNewProject()">Buat Proyek</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="invoiceModal" style="display:none" onclick="closeModal('invoiceModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><div class="modal-title">Invoice #INV-2025-031</div><div class="modal-close" onclick="closeModal('invoiceModal')">×</div></div>
+    <div class="modal-body">
+      <div class="inv-header">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div style="font-size:15px;font-weight:700;margin-bottom:4px">MEcons Engineering Consultants</div><div style="font-size:11px;color:var(--steel2)">Jl. TB Simatupang No. 18, Jakarta Selatan</div></div>
+          <div style="text-align:right"><div style="font-size:20px;font-weight:700;font-family:var(--mono)">INVOICE</div><div style="font-size:12px;color:var(--steel2)">#INV-2025-031</div></div>
+        </div>
+      </div>
+      <div class="inv-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;padding:14px;border-bottom:1px solid var(--border);gap:10px">
+          <div><div style="font-size:10.5px;color:var(--text3);font-weight:600;margin-bottom:4px">DITAGIHKAN KEPADA</div><div style="font-weight:600">PT Graha Sentosa</div><div style="font-size:11.5px;color:var(--text2)">Bpk. Surya Adi · Dir. Procurement</div></div>
+          <div style="text-align:right"><div style="font-size:11.5px">Tgl: <strong>01 Mar 2025</strong></div><div style="font-size:11.5px">Jatuh Tempo: <strong style="color:var(--warning)">31 Mar 2025</strong></div></div>
+        </div>
+        <table class="inv-table">
+          <thead><tr><th>#</th><th>Deskripsi</th><th>%</th><th style="text-align:right">Nilai (Rp)</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:var(--mono)">01</td><td>Termin 3 — Instalasi HVAC Lt. 11-15 (progress 72%)</td><td style="font-family:var(--mono)">20%</td><td style="font-family:var(--mono);font-weight:600;text-align:right">2,480,000,000</td></tr>
+            <tr class="inv-total-row"><td colspan="3" style="text-align:right;font-weight:600;padding-right:14px">Subtotal</td><td style="font-family:var(--mono);font-weight:600;text-align:right">2,480,000,000</td></tr>
+            <tr class="inv-total-row"><td colspan="3" style="text-align:right;color:var(--text3);padding-right:14px">PPh 23 (2%)</td><td style="font-family:var(--mono);color:var(--danger);text-align:right">-49,600,000</td></tr>
+            <tr class="inv-total-row"><td colspan="3" style="text-align:right;font-weight:700;font-size:13px;padding-right:14px">Total</td><td style="font-family:var(--mono);font-weight:700;font-size:14px;text-align:right;color:var(--blue)">2,430,400,000</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:10px 14px;font-size:11px;color:var(--text3)">Transfer: BCA 0123-456-789 a/n PT MEcons Engineering Consultants</div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('invoiceModal')">Tutup</button><button class="btn btn-primary" onclick="showToast('Email invoice terkirim!');closeModal('invoiceModal')">📧 Kirim ke Klien</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const pages={dashboard:'Dashboard',projects:'Daftar Proyek',detail:'Detail Proyek',gantt:'Timeline Gantt',budget:'Budget & Invoice',clients:'Klien & Lead',schedule:'Jadwal Tim',calc:'Kalkulator Engineering',docs:'Dokumentasi Teknis',risk:'Risk Register',analytics:'Analytics & Laporan'};
+const ctas={dashboard:'+ Proyek Baru',projects:'+ Proyek Baru',detail:'Edit Proyek',gantt:'↓ Export',budget:'+ Invoice',clients:'+ Tambah Klien',schedule:'+ Assign',calc:'Export Hasil',docs:'↑ Upload',risk:'+ Tambah Risiko',analytics:'↓ Export'};
+
+function go(page,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.getElementById('pageTitle').textContent=pages[page]||page;
+  document.getElementById('ctaBtn').textContent=ctas[page]||'+ Baru';
+  document.getElementById('mainContent').innerHTML=renderPage(page);
+  document.getElementById('notifPanel').classList.remove('open');
+  if(page==='budget')document.getElementById('ctaBtn').onclick=openInvoice;
+  else if(['projects','dashboard'].includes(page))document.getElementById('ctaBtn').onclick=openNewProject;
+  else document.getElementById('ctaBtn').onclick=()=>showToast('Fitur segera tersedia');
+}
+
+function renderPage(p){
+  const pages2={
+    dashboard:renderDashboard,
+    projects:renderProjects,
+    detail:renderDetail,
+    gantt:renderGantt,
+    budget:renderBudget,
+    clients:renderClients,
+    schedule:renderSchedule,
+    calc:renderCalc,
+    docs:renderDocs,
+    risk:renderRisk,
+    analytics:renderAnalytics
+  };
+  return pages2[p]?pages2[p]():'<div class="card"><p>Halaman sedang dikembangkan.</p></div>';
+}
+
+function renderDashboard(){return`
+<div class="g4" style="margin-bottom:14px">
+  <div class="kpi-card blue"><div class="kpi-label">Proyek Aktif</div><div class="kpi-value">12</div><div class="kpi-sub"><span class="kpi-up">↑ 2</span>&nbsp;bulan ini</div></div>
+  <div class="kpi-card green"><div class="kpi-label">Kontrak YTD</div><div class="kpi-value">47.3M</div><div class="kpi-sub"><span class="kpi-up">↑ 23.4%</span>&nbsp;vs 2024</div></div>
+  <div class="kpi-card amber"><div class="kpi-label">Utilisasi Tim</div><div class="kpi-value">84%</div><div class="kpi-sub"><span class="kpi-up">↑ 6%</span>&nbsp;minggu ini</div></div>
+  <div class="kpi-card red"><div class="kpi-label">At Risk</div><div class="kpi-value">3</div><div class="kpi-sub"><span class="kpi-dn">↑ 1</span>&nbsp;perlu tindakan</div></div>
+</div>
+<div class="g2" style="margin-bottom:14px">
+  <div class="card">
+    <div class="card-header"><div class="card-title">Proyek Prioritas</div><span class="card-action" onclick="go('projects',document.querySelector('[onclick*=projects]'))">Lihat semua →</span></div>
+    <table class="data-table">
+      <thead><tr><th>Proyek</th><th>Progress</th><th>Deadline</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><div style="font-weight:500;font-size:11.5px">Sudirman Tower HVAC</div><div style="font-size:10px;color:var(--text3)">PT Graha Sentosa</div></td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:70px"><div class="prog-fill" style="width:72%"></div></div><span style="font-size:10.5px;font-weight:600;font-family:var(--mono)">72%</span></div></td><td style="font-size:11px;font-family:var(--mono)">15 Jun</td><td><span class="badge badge-blue">On Track</span></td></tr>
+        <tr><td><div style="font-weight:500;font-size:11.5px">Karawang Phase 2</div><div style="font-size:10px;color:var(--text3)">PT Indosurya Mfg</div></td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:70px"><div class="prog-fill g" style="width:58%"></div></div><span style="font-size:10.5px;font-weight:600;font-family:var(--mono)">58%</span></div></td><td style="font-size:11px;font-family:var(--mono)">30 Agt</td><td><span class="badge badge-green">On Track</span></td></tr>
+        <tr><td><div style="font-weight:500;font-size:11.5px">RSUD Surabaya MEP</div><div style="font-size:10px;color:var(--text3)">Pemkot Surabaya</div></td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:70px"><div class="prog-fill a" style="width:41%"></div></div><span style="font-size:10.5px;font-weight:600;font-family:var(--mono)">41%</span></div></td><td style="font-size:11px;font-family:var(--mono);color:var(--danger);font-weight:600">01 Apr</td><td><span class="badge badge-amber">At Risk</span></td></tr>
+        <tr><td><div style="font-weight:500;font-size:11.5px">Solar MM2100 1.2 MWp</div><div style="font-size:10px;color:var(--text3)">PT Delta Surya</div></td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:70px"><div class="prog-fill" style="width:88%"></div></div><span style="font-size:10.5px;font-weight:600;font-family:var(--mono)">88%</span></div></td><td style="font-size:11px;font-family:var(--mono)">31 Mar</td><td><span class="badge badge-gray">Closing</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Aktivitas Terbaru</div></div>
+      <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--silver)"><div style="width:6px;height:6px;border-radius:50%;background:var(--blue);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:11.5px;color:var(--text2)">Shop drawing HVAC Lt.15-20 disetujui</div><div style="font-size:10px;color:var(--text3)">10:32 — Sudirman Tower</div></div></div>
+      <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--silver)"><div style="width:6px;height:6px;border-radius:50%;background:var(--warning);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:11.5px;color:var(--text2)">Budget Karawang mendekati batas (89%)</div><div style="font-size:10px;color:var(--text3)">09:15 — Karawang Phase 2</div></div></div>
+      <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--silver)"><div style="width:6px;height:6px;border-radius:50%;background:var(--success);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:11.5px;color:var(--text2)">Laporan commissioning Solar diunggah</div><div style="font-size:10px;color:var(--text3)">Kemarin 16:45</div></div></div>
+      <div style="display:flex;gap:8px;padding:6px 0"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:11.5px;color:var(--text2)">Lead baru: Gedung BUMN Jakarta ~Rp 8.5M</div><div style="font-size:10px;color:var(--text3)">Kemarin 08:00</div></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Checklist Harian</div></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box done"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="check-text done">Review RFI #034 RSUD Surabaya</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box done"><svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></div><span class="check-text done">Approve shop drawing Sudirman Lt.15</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Follow up invoice #INV-028</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Kirim proposal BD — BUMN Prospect</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-text">Weekly team sync 15:00</span></div>
+    </div>
+  </div>
+</div>
+<div class="g3">
+  <div class="card">
+    <div class="card-header"><div class="card-title">Revenue per Kuartal (Rp Juta)</div></div>
+    <div class="mini-bars" style="height:60px;margin-top:8px">
+      <div class="mini-bar" style="height:46%"></div><div class="mini-bar" style="height:56%"></div><div class="mini-bar" style="height:40%"></div><div class="mini-bar accent" style="height:100%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px;font-family:var(--mono)"><span>Q1: 8.2M</span><span>Q2: 11.6M</span><span>Q3: 9.4M</span><span>Q4: 18.1M</span></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Portofolio Disiplin</div></div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <svg width="65" height="65" viewBox="0 0 70 70">
+        <circle cx="35" cy="35" r="28" fill="none" stroke="var(--silver)" stroke-width="10"/>
+        <circle cx="35" cy="35" r="28" fill="none" stroke="var(--blue)" stroke-width="10" stroke-dasharray="59 116" stroke-dashoffset="0" transform="rotate(-90,35,35)"/>
+        <circle cx="35" cy="35" r="28" fill="none" stroke="var(--success)" stroke-width="10" stroke-dasharray="42 133" stroke-dashoffset="-59" transform="rotate(-90,35,35)"/>
+        <circle cx="35" cy="35" r="28" fill="none" stroke="var(--warning)" stroke-width="10" stroke-dasharray="28 147" stroke-dashoffset="-101" transform="rotate(-90,35,35)"/>
+        <text x="35" y="39" text-anchor="middle" font-size="13" font-weight="700" fill="#0A1628" font-family="IBM Plex Mono">12</text>
+      </svg>
+      <div style="flex:1">
+        <div class="metric-row"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px"><div style="width:8px;height:8px;border-radius:2px;background:var(--blue)"></div>Mechanical</div><span class="metric-val">5</span></div>
+        <div class="metric-row"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px"><div style="width:8px;height:8px;border-radius:2px;background:var(--success)"></div>Electrical</div><span class="metric-val">4</span></div>
+        <div class="metric-row"><div style="display:flex;align-items:center;gap:5px;font-size:11.5px"><div style="width:8px;height:8px;border-radius:2px;background:var(--warning)"></div>M&E</div><span class="metric-val">3</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Pembayaran Tertunda</div></div>
+    <div class="metric-row"><span class="metric-label">INV-2025-031</span><span class="metric-val" style="color:var(--warning)">Rp 2.4M</span></div>
+    <div class="metric-row"><span class="metric-label">INV-2025-028</span><span class="metric-val" style="color:var(--danger)">Rp 1.8M</span></div>
+    <div class="metric-row"><span class="metric-label">INV-2025-025</span><span class="metric-val">Rp 3.1M</span></div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--silver);display:flex;justify-content:space-between">
+      <span style="font-size:11px;color:var(--text3)">Total outstanding</span>
+      <span style="font-size:14px;font-weight:700;color:var(--text);font-family:var(--mono)">Rp 7.3M</span>
+    </div>
+  </div>
+</div>`;}
+
+function renderProjects(){return`
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+  <div class="filter-chip active" onclick="filterProj('all',this)">Semua (12)</div>
+  <div class="filter-chip" onclick="filterProj('m',this)">Mechanical (5)</div>
+  <div class="filter-chip" onclick="filterProj('e',this)">Electrical (4)</div>
+  <div class="filter-chip" onclick="filterProj('me',this)">M&E (3)</div>
+  <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="openNewProject()">+ Proyek Baru</button></div>
+</div>
+<div class="card" style="padding:0;overflow:hidden">
+  <table class="data-table" id="projTable">
+    <thead><tr><th>Nama Proyek</th><th>Klien</th><th>Disiplin</th><th>PM</th><th>Nilai</th><th>Progress</th><th>Deadline</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr data-type="m"><td><div style="font-weight:600;font-size:12px">Sudirman Tower — HVAC & Plumbing</div><div style="font-size:10.5px;color:var(--text3)">Jakarta Pusat</div></td><td style="font-size:11.5px">PT Graha Sentosa</td><td><span class="badge badge-blue">Mech</span></td><td style="font-size:11.5px">Ir. Budi S.</td><td style="font-family:var(--mono);font-size:11.5px;font-weight:600">12.4M</td><td><div style="display:flex;align-items:center;gap:5px"><div class="prog-bar" style="width:60px"><div class="prog-fill" style="width:72%"></div></div><span style="font-size:10px;font-family:var(--mono)">72%</span></div></td><td style="font-size:11px;font-family:var(--mono)">15 Jun 25</td><td><span class="badge badge-blue">On Track</span></td><td><button class="btn btn-ghost btn-xs" onclick="go('detail',document.querySelector(\'[onclick*=detail]\'))">Detail</button></td></tr>
+      <tr data-type="e"><td><div style="font-weight:600;font-size:12px">Pabrik Karawang Phase 2</div><div style="font-size:10.5px;color:var(--text3)">Karawang</div></td><td style="font-size:11.5px">PT Indosurya Mfg</td><td><span class="badge badge-green">Elec</span></td><td style="font-size:11.5px">Ir. Dewi A.</td><td style="font-family:var(--mono);font-size:11.5px;font-weight:600">9.8M</td><td><div style="display:flex;align-items:center;gap:5px"><div class="prog-bar" style="width:60px"><div class="prog-fill g" style="width:58%"></div></div><span style="font-size:10px;font-family:var(--mono)">58%</span></div></td><td style="font-size:11px;font-family:var(--mono)">30 Agt 25</td><td><span class="badge badge-green">On Track</span></td><td><button class="btn btn-ghost btn-xs">Detail</button></td></tr>
+      <tr data-type="me"><td><div style="font-weight:600;font-size:12px">RSUD Surabaya — MEP Lengkap</div><div style="font-size:10.5px;color:var(--text3)">Surabaya</div></td><td style="font-size:11.5px">Pemkot Surabaya</td><td><span class="badge badge-purple">M&E</span></td><td style="font-size:11.5px">Ir. Anton H.</td><td style="font-family:var(--mono);font-size:11.5px;font-weight:600">7.2M</td><td><div style="display:flex;align-items:center;gap:5px"><div class="prog-bar" style="width:60px"><div class="prog-fill a" style="width:41%"></div></div><span style="font-size:10px;font-family:var(--mono)">41%</span></div></td><td style="font-size:11px;font-family:var(--mono);color:var(--danger);font-weight:600">01 Apr 25</td><td><span class="badge badge-amber">At Risk</span></td><td><button class="btn btn-ghost btn-xs">Detail</button></td></tr>
+      <tr data-type="m"><td><div style="font-weight:600;font-size:12px">Bali Resort Hotel — HVAC Central</div><div style="font-size:10.5px;color:var(--text3)">Badung, Bali</div></td><td style="font-size:11.5px">PT Bali Hospitality</td><td><span class="badge badge-blue">Mech</span></td><td style="font-size:11.5px">Ir. Sarah W.</td><td style="font-family:var(--mono);font-size:11.5px;font-weight:600">6.5M</td><td><div style="display:flex;align-items:center;gap:5px"><div class="prog-bar" style="width:60px"><div class="prog-fill" style="width:29%"></div></div><span style="font-size:10px;font-family:var(--mono)">29%</span></div></td><td style="font-size:11px;font-family:var(--mono)">01 Des 25</td><td><span class="badge badge-blue">On Track</span></td><td><button class="btn btn-ghost btn-xs">Detail</button></td></tr>
+      <tr data-type="e"><td><div style="font-weight:600;font-size:12px">Solar Rooftop 1.2 MWp MM2100</div><div style="font-size:10.5px;color:var(--text3)">Bekasi</div></td><td style="font-size:11.5px">PT Delta Surya</td><td><span class="badge badge-green">Elec</span></td><td style="font-size:11.5px">Ir. Rizky P.</td><td style="font-family:var(--mono);font-size:11.5px;font-weight:600">5.1M</td><td><div style="display:flex;align-items:center;gap:5px"><div class="prog-bar" style="width:60px"><div class="prog-fill" style="width:88%"></div></div><span style="font-size:10px;font-family:var(--mono)">88%</span></div></td><td style="font-size:11px;font-family:var(--mono)">31 Mar 25</td><td><span class="badge badge-gray">Closing</span></td><td><button class="btn btn-ghost btn-xs">Detail</button></td></tr>
+    </tbody>
+  </table>
+</div>`;}
+
+function renderDetail(){return`
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+  <span class="badge badge-blue" style="font-size:11px;padding:3px 10px">Mechanical</span>
+  <div style="font-size:16px;font-weight:700">Sudirman Tower — HVAC & Plumbing System</div>
+  <span class="badge badge-blue">On Track</span>
+  <div style="margin-left:auto"><button class="btn btn-primary btn-sm" onclick="showToast('Perubahan disimpan ✓')">Simpan</button></div>
+</div>
+<div class="tabs" id="dtTabs">
+  <div class="tab active" onclick="switchDTab('ov',this)">Overview</div>
+  <div class="tab" onclick="switchDTab('del',this)">Deliverables</div>
+  <div class="tab" onclick="switchDTab('team',this)">Tim</div>
+  <div class="tab" onclick="switchDTab('iss',this)">Issues & RFI</div>
+  <div class="tab" onclick="switchDTab('co',this)">Change Order</div>
+</div>
+<div id="dtContent">
+  <div class="g2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Informasi Proyek</div>
+      <div class="detail-row"><div class="detail-key">No. Kontrak</div><div class="detail-val" style="font-family:var(--mono)">KNT-2024-047</div></div>
+      <div class="detail-row"><div class="detail-key">Klien</div><div class="detail-val">PT Graha Sentosa</div></div>
+      <div class="detail-row"><div class="detail-key">Nilai Kontrak</div><div class="detail-val" style="font-weight:700;font-family:var(--mono)">Rp 12,400,000,000</div></div>
+      <div class="detail-row"><div class="detail-key">Tanggal Mulai</div><div class="detail-val" style="font-family:var(--mono)">12 Sep 2024</div></div>
+      <div class="detail-row"><div class="detail-key">Target Selesai</div><div class="detail-val" style="font-family:var(--mono)">15 Jun 2025</div></div>
+      <div class="detail-row"><div class="detail-key">Project Manager</div><div class="detail-val">Ir. Budi Santoso, MT</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">Progress per Fase</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Detail Engineering</span><span style="font-family:var(--mono);font-weight:600">100%</span></div><div class="prog-bar"><div class="prog-fill g" style="width:100%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Pengadaan Material</span><span style="font-family:var(--mono);font-weight:600">85%</span></div><div class="prog-bar"><div class="prog-fill g" style="width:85%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Instalasi HVAC</span><span style="font-family:var(--mono);font-weight:600">72%</span></div><div class="prog-bar"><div class="prog-fill" style="width:72%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Instalasi Plumbing</span><span style="font-family:var(--mono);font-weight:600">60%</span></div><div class="prog-bar"><div class="prog-fill" style="width:60%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Testing & Commissioning</span><span style="font-family:var(--mono);font-weight:600">15%</span></div><div class="prog-bar"><div class="prog-fill a" style="width:15%"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">Budget Snapshot</div>
+        <div class="gauge-track"><div class="gauge-fill" style="width:68%;background:var(--blue)"></div></div>
+        <div class="gauge-markers"><span>0</span><span>Terpakai: Rp 8.43M (68%)</span><span>Rp 12.4M</span></div>
+        <div style="display:flex;gap:16px;margin-top:10px">
+          <div><div style="font-size:9.5px;color:var(--text3);text-transform:uppercase">Sisa</div><div style="font-size:14px;font-weight:700;font-family:var(--mono)">Rp 3.97M</div></div>
+          <div><div style="font-size:9.5px;color:var(--text3);text-transform:uppercase">CPI</div><div style="font-size:14px;font-weight:700;font-family:var(--mono);color:var(--success)">1.06</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;}
+
+function switchDTab(t,el){
+  document.querySelectorAll('#dtTabs .tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  const c=document.getElementById('dtContent');
+  const tabs={
+    ov:`<div class="card"><div class="card-title" style="margin-bottom:10px">Detail overview sudah ditampilkan di tab ini</div><p style="font-size:12px;color:var(--text2)">Gunakan tab lain untuk navigasi deliverables, tim, isu, dan change order.</p></div>`,
+    del:`<div class="card" style="padding:0;overflow:hidden"><table class="data-table"><thead><tr><th>Kode</th><th>Deskripsi</th><th>Jenis</th><th>PIC</th><th>Rencana</th><th>Status</th></tr></thead><tbody><tr><td style="font-family:var(--mono);font-size:11px">SD-M-001</td><td style="font-size:11.5px">Shop Drawing HVAC Lt. B2-5</td><td><span class="badge badge-blue">Drawing</span></td><td style="font-size:11px">Ir. Budi S.</td><td style="font-family:var(--mono);font-size:11px">15 Nov 24</td><td><span class="badge badge-green">Approved</span></td></tr><tr><td style="font-family:var(--mono);font-size:11px">SD-M-003</td><td style="font-size:11.5px">Shop Drawing HVAC Lt. 11-20</td><td><span class="badge badge-blue">Drawing</span></td><td style="font-size:11px">Ir. Budi S.</td><td style="font-family:var(--mono);font-size:11px">01 Mar 25</td><td><span class="badge badge-blue">IFC</span></td></tr><tr><td style="font-family:var(--mono);font-size:11px">CALC-M-015</td><td style="font-size:11.5px">Load Calculation HVAC Rev.1</td><td><span class="badge badge-amber">Calculation</span></td><td style="font-size:11px">Ir. Sarah W.</td><td style="font-family:var(--mono);font-size:11px">15 Mar 25</td><td><span class="badge badge-amber">Review</span></td></tr></tbody></table></div>`,
+    team:`<div class="g3"><div class="card" style="text-align:center"><div class="avatar" style="background:var(--blue2);width:44px;height:44px;font-size:14px;margin:0 auto 10px">BS</div><div style="font-size:13px;font-weight:600">Ir. Budi Santoso, MT</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">Project Manager</div><div class="metric-row"><span class="metric-label">Utilisasi</span><span class="metric-val">95%</span></div><div class="metric-row"><span class="metric-label">Deliverables</span><span class="metric-val">12/14</span></div></div><div class="card" style="text-align:center"><div class="avatar" style="background:var(--success);width:44px;height:44px;font-size:14px;margin:0 auto 10px">SW</div><div style="font-size:13px;font-weight:600">Ir. Sarah Wijaya</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">Mechanical Engineer</div><div class="metric-row"><span class="metric-label">Utilisasi</span><span class="metric-val">85%</span></div><div class="metric-row"><span class="metric-label">Deliverables</span><span class="metric-val">8/10</span></div></div><div class="card" style="text-align:center"><div class="avatar" style="background:var(--accent2);width:44px;height:44px;font-size:14px;margin:0 auto 10px">FN</div><div style="font-size:13px;font-weight:600">Ir. Fajar Nugroho</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">CAD Engineer</div><div class="metric-row"><span class="metric-label">Utilisasi</span><span class="metric-val">100%</span></div><div class="metric-row"><span class="metric-label">Deliverables</span><span class="metric-val">6/7</span></div></div></div>`,
+    iss:`<div class="card" style="padding:0;overflow:hidden"><table class="data-table"><thead><tr><th>No.</th><th>Deskripsi</th><th>Dari</th><th>Prioritas</th><th>Due</th><th>Status</th></tr></thead><tbody><tr><td style="font-family:var(--mono);font-size:11px">RFI-034</td><td style="font-size:11.5px">Klarifikasi jalur pipa chilled water Lt. 8</td><td style="font-size:11px">PT Graha Sentosa</td><td><span class="badge badge-red">High</span></td><td style="font-family:var(--mono);font-size:11px;color:var(--danger);font-weight:600">20 Mar</td><td><span class="badge badge-amber">Pending</span></td></tr><tr><td style="font-family:var(--mono);font-size:11px">ISS-018</td><td style="font-size:11.5px">Interferensi pipa HVAC vs balok Lt. 12</td><td style="font-size:11px">Internal</td><td><span class="badge badge-red">High</span></td><td style="font-family:var(--mono);font-size:11px">18 Mar</td><td><span class="badge badge-blue">In Progress</span></td></tr></tbody></table></div>`,
+    co:`<div class="card" style="padding:0;overflow:hidden"><table class="data-table"><thead><tr><th>No. CO</th><th>Deskripsi</th><th>Nilai</th><th>Status</th></tr></thead><tbody><tr><td style="font-family:var(--mono);font-size:11px">CO-007</td><td style="font-size:11.5px">Penambahan smoke exhaust basement</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">+Rp 480M</td><td><span class="badge badge-amber">Review</span></td></tr><tr><td style="font-family:var(--mono);font-size:11px">CO-006</td><td style="font-size:11.5px">Upgrade spesifikasi chiller</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">+Rp 220M</td><td><span class="badge badge-green">Approved</span></td></tr></tbody></table></div>`
+  };
+  c.innerHTML=tabs[t]||'';
+}
+
+function renderGantt(){return`
+<div class="card" style="padding:0;overflow:hidden;margin-bottom:8px">
+  <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+    <div class="card-title">Timeline Proyek Aktif — Q1-Q2 2025</div>
+    <button class="btn btn-ghost btn-sm" onclick="showToast('Export PDF berhasil')">↓ Export PDF</button>
+  </div>
+  <div style="overflow-x:auto;padding:14px">
+    <table style="width:100%;border-collapse:collapse;min-width:700px">
+      <thead>
+        <tr>
+          <th style="text-align:left;font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);width:180px">Proyek</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Jan</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Feb</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center;color:var(--accent2)">Mar ◀</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Apr</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Mei</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Jun</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Jul</th>
+          <th style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;padding:8px;border-bottom:1.5px solid var(--border);text-align:center">Agt</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${[
+          ['Sudirman Tower HVAC','var(--blue)',1,6,'72%'],
+          ['Karawang Phase 2','var(--success)',2,8,'58%'],
+          ['RSUD Surabaya MEP','var(--warning)',1,3,'41%'],
+          ['Bali Resort Hotel','#7C3AED',3,8,'29%'],
+          ['Solar MM2100','var(--success)',1,3,'88%'],
+          ['Meikarta Tower C','var(--blue)',4,8,'18%']
+        ].map(([name,color,start,end,pct])=>{
+          const cols=Array.from({length:8},(_,i)=>{
+            const col=i+1;
+            if(col>=start&&col<=end){
+              if(col===start) return`<td style="padding:4px"><div style="background:${color};color:#fff;font-size:10px;font-weight:600;padding:5px 8px;border-radius:4px;white-space:nowrap">${name} (${pct})</div></td>`;
+              return`<td style="padding:4px"><div style="background:${color};height:28px;border-radius:4px;opacity:0.7"></div></td>`;
+            }
+            return'<td style="padding:4px"></td>';
+          });
+          return`<tr>${cols.join('')}</tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="display:flex;gap:14px;flex-wrap:wrap">
+  <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)"><div style="width:10px;height:10px;border-radius:2px;background:var(--blue)"></div>Mechanical</div>
+  <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)"><div style="width:10px;height:10px;border-radius:2px;background:var(--success)"></div>Electrical</div>
+  <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)"><div style="width:10px;height:10px;border-radius:2px;background:var(--warning)"></div>At Risk</div>
+  <div style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)"><div style="width:10px;height:10px;border-radius:2px;background:#7C3AED"></div>M&E</div>
+  <span style="font-size:11px;color:var(--accent2);font-weight:600">◀ Today: 17 Mar 2025</span>
+</div>`;}
+
+function renderBudget(){return`
+<div class="tabs" id="budgTabs">
+  <div class="tab active" onclick="switchBTab('b',this)">Budget Tracking</div>
+  <div class="tab" onclick="switchBTab('i',this)">Invoice</div>
+  <div class="tab" onclick="switchBTab('c',this)">Cash Flow</div>
+</div>
+<div id="budgContent">
+  <div class="g4" style="margin-bottom:14px">
+    <div class="kpi-card blue"><div class="kpi-label">Total Kontrak</div><div class="kpi-value" style="font-size:18px">47.3M</div><div class="kpi-sub">12 proyek aktif</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Sudah Ditagih</div><div class="kpi-value" style="font-size:18px">28.6M</div><div class="kpi-sub"><span class="kpi-up">60.5%</span> dari kontrak</div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Outstanding</div><div class="kpi-value" style="font-size:18px">7.3M</div><div class="kpi-sub">3 invoice</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">Margin Rata-rata</div><div class="kpi-value" style="font-size:18px">18.2%</div><div class="kpi-sub"><span class="kpi-up">↑ 2.1%</span> YoY</div></div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="data-table">
+      <thead><tr><th>Proyek</th><th>Kontrak</th><th>Terpakai</th><th>%</th><th>CPI</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-size:11.5px;font-weight:500">Sudirman Tower HVAC</td><td style="font-family:var(--mono);font-size:11.5px">Rp 12.4M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:68%"></div></div><span style="font-size:10.5px;font-family:var(--mono)">8.43M</span></div></td><td style="font-family:var(--mono);font-weight:600">68%</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">1.06</td><td><span class="badge badge-green">Sehat</span></td></tr>
+        <tr><td style="font-size:11.5px;font-weight:500">Karawang Phase 2</td><td style="font-family:var(--mono);font-size:11.5px">Rp 9.8M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:80px"><div class="prog-fill a" style="width:89%"></div></div><span style="font-size:10.5px;font-family:var(--mono)">8.72M</span></div></td><td style="font-family:var(--mono);font-weight:600;color:var(--warning)">89%</td><td style="font-family:var(--mono);color:var(--warning);font-weight:600">0.93</td><td><span class="badge badge-amber">Monitor</span></td></tr>
+        <tr><td style="font-size:11.5px;font-weight:500">RSUD Surabaya MEP</td><td style="font-family:var(--mono);font-size:11.5px">Rp 7.2M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:80px"><div class="prog-fill" style="width:45%"></div></div><span style="font-size:10.5px;font-family:var(--mono)">3.24M</span></div></td><td style="font-family:var(--mono);font-weight:600">45%</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">1.09</td><td><span class="badge badge-green">Sehat</span></td></tr>
+        <tr><td style="font-size:11.5px;font-weight:500">Solar MM2100</td><td style="font-family:var(--mono);font-size:11.5px">Rp 5.1M</td><td><div style="display:flex;align-items:center;gap:6px"><div class="prog-bar" style="width:80px"><div class="prog-fill g" style="width:82%"></div></div><span style="font-size:10.5px;font-family:var(--mono)">4.18M</span></div></td><td style="font-family:var(--mono);font-weight:600">82%</td><td style="font-family:var(--mono);color:var(--success);font-weight:600">1.07</td><td><span class="badge badge-green">Sehat</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>`;}
+
+function switchBTab(t,el){
+  document.querySelectorAll('#budgTabs .tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  const c=document.getElementById('budgContent');
+  if(t==='i'){c.innerHTML=`<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-primary btn-sm" onclick="openInvoice()">+ Buat Invoice</button></div><div class="card" style="padding:0;overflow:hidden"><table class="data-table"><thead><tr><th>No. Invoice</th><th>Proyek</th><th>Klien</th><th>Nilai</th><th>Jatuh Tempo</th><th>Status</th><th></th></tr></thead><tbody><tr><td style="font-family:var(--mono);font-size:11.5px">INV-2025-031</td><td>Sudirman Tower</td><td>PT Graha Sentosa</td><td style="font-family:var(--mono);font-weight:600">Rp 2,400,000,000</td><td style="font-family:var(--mono);font-size:11px;color:var(--warning)">31 Mar 25</td><td><span class="badge badge-amber">Menunggu</span></td><td><button class="btn btn-ghost btn-xs" onclick="openInvoice()">Lihat</button></td></tr><tr><td style="font-family:var(--mono);font-size:11.5px">INV-2025-028</td><td>RSUD Surabaya</td><td>Pemkot Surabaya</td><td style="font-family:var(--mono);font-weight:600">Rp 1,800,000,000</td><td style="font-family:var(--mono);font-size:11px;color:var(--danger);font-weight:600">15 Mar 25</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn btn-ghost btn-xs" onclick="openInvoice()">Lihat</button></td></tr><tr><td style="font-family:var(--mono);font-size:11.5px">INV-2025-025</td><td>Karawang Phase 2</td><td>PT Indosurya</td><td style="font-family:var(--mono);font-weight:600">Rp 3,100,000,000</td><td style="font-family:var(--mono);font-size:11px">01 Mar 25</td><td><span class="badge badge-green">Lunas</span></td><td><button class="btn btn-ghost btn-xs" onclick="openInvoice()">Lihat</button></td></tr></tbody></table></div>`;}
+  else if(t==='c'){c.innerHTML=`<div class="g2"><div class="card"><div class="card-title" style="margin-bottom:10px">Summary Cash Flow YTD</div><div class="metric-row"><span class="metric-label">Total Penerimaan</span><span class="metric-val" style="color:var(--success)">Rp 21.25M</span></div><div class="metric-row"><span class="metric-label">Total Pengeluaran</span><span class="metric-val">Rp 16.37M</span></div><div class="metric-row"><span class="metric-label">Net Cash Flow</span><span class="metric-val" style="color:var(--blue)">Rp 4.88M</span></div><div class="metric-row"><span class="metric-label">AR Outstanding</span><span class="metric-val" style="color:var(--warning)">Rp 7.3M</span></div><div class="metric-row"><span class="metric-label">Days Sales Outstanding</span><span class="metric-val">47 hari</span></div></div><div class="card"><div class="card-title" style="margin-bottom:10px">Proyeksi Q2</div><div style="padding:16px;background:var(--bg);border-radius:var(--r);text-align:center"><div style="font-size:10.5px;color:var(--text3)">Net Cash Flow Proyeksi Q2</div><div style="font-size:28px;font-weight:700;color:var(--blue);font-family:var(--mono);margin-top:4px">+Rp 12.4M</div></div></div></div>`;}
+}
+
+function renderClients(){return`
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+  <div style="display:flex;gap:6px"><div class="filter-chip active">Semua</div><div class="filter-chip">Aktif</div><div class="filter-chip">Lead</div></div>
+  <button class="btn btn-primary btn-sm" onclick="showToast('Form tambah klien terbuka')">+ Tambah Klien</button>
+</div>
+<div class="card" style="padding:0;overflow:hidden">
+  <table class="data-table">
+    <thead><tr><th>Perusahaan</th><th>Kontak PIC</th><th>Bidang</th><th>Proyek Aktif</th><th>Total Nilai</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      <tr><td><div style="font-weight:600;font-size:12px">PT Graha Sentosa</div></td><td style="font-size:11.5px">Bpk. Surya Adi · Dir. Procurement</td><td><span class="badge badge-blue">Developer</span></td><td style="text-align:center;font-family:var(--mono)">2</td><td style="font-family:var(--mono);font-weight:600">Rp 18.2M</td><td><span class="badge badge-green">Aktif</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Detail klien terbuka')">Detail</button></td></tr>
+      <tr><td><div style="font-weight:600;font-size:12px">PT Indosurya Manufacturing</div></td><td style="font-size:11.5px">Ibu Lina Sari · Head of Infra</td><td><span class="badge badge-green">Industri</span></td><td style="text-align:center;font-family:var(--mono)">1</td><td style="font-family:var(--mono);font-weight:600">Rp 9.8M</td><td><span class="badge badge-green">Aktif</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Detail klien terbuka')">Detail</button></td></tr>
+      <tr><td><div style="font-weight:600;font-size:12px">Pemkot Surabaya — Dinas PU</div></td><td style="font-size:11.5px">Bpk. Hendri · Kabid Prasarana</td><td><span class="badge badge-purple">Pemerintah</span></td><td style="text-align:center;font-family:var(--mono)">1</td><td style="font-family:var(--mono);font-weight:600">Rp 7.2M</td><td><span class="badge badge-amber">At Risk</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Detail klien terbuka')">Detail</button></td></tr>
+      <tr><td><div style="font-weight:600;font-size:12px">PT Nusantara Kreasi <span class="badge badge-amber" style="font-size:9px">Prospect</span></div></td><td style="font-size:11.5px">Bpk. Farid Rahman · GM Operasi</td><td><span class="badge badge-blue">BUMN</span></td><td style="text-align:center;font-family:var(--mono)">0</td><td style="font-family:var(--mono);font-weight:600">~Rp 8.5M</td><td><span class="badge badge-blue">Lead Baru</span></td><td><button class="btn btn-ghost btn-xs" onclick="showToast('Pipeline nurture terbuka')">Nurture</button></td></tr>
+    </tbody>
+  </table>
+</div>`;}
+
+function renderSchedule(){return`
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div style="font-size:13px;font-weight:600">Minggu 3 Maret 2025 — 17-21 Mar</div>
+  <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm">← Prev</button><button class="btn btn-ghost btn-sm">Next →</button><button class="btn btn-primary btn-sm" onclick="showToast('Form assign tugas terbuka')">+ Assign</button></div>
+</div>
+<div class="card" style="padding:0;overflow:hidden;margin-bottom:14px">
+  <table class="data-table">
+    <thead><tr><th style="width:140px">Engineer</th><th>Senin 17</th><th>Selasa 18</th><th>Rabu 19</th><th>Kamis 20</th><th>Jumat 21</th><th>Util%</th></tr></thead>
+    <tbody>
+      ${[
+        ['Ir. Budi S.','Mech. Lead','var(--blue4)','var(--blue)','HVAC Review','HVAC Review','Site Visit','Dok. Spek','Mgmt Rpt','95%'],
+        ['Ir. Dewi A.','Elec. Lead','var(--success-bg)','var(--success)','SLD Kwrng','SLD Kwrng','Panel Sched','Client Mtg','Commission','100%'],
+        ['Ir. Anton H.','MEP Coord.','var(--warning-bg)','var(--warning)','RFI RSUD','Plmb Calc','Plmb Calc','Koordinasi','Review Dok','80%'],
+        ['Ir. Sarah W.','Mech. Eng.','var(--blue4)','var(--blue)','HVAC Bali','Site Survey','Site Survey','Equip Sched','Progress Rpt','85%']
+      ].map(([n,r,bg,fg,d1,d2,d3,d4,d5,u])=>`
+        <tr>
+          <td><div style="font-weight:600;font-size:11.5px">${n}</div><div style="font-size:10px;color:var(--text3)">${r}</div></td>
+          ${[d1,d2,d3,d4,d5].map(d=>`<td><div style="background:${bg};color:${fg};font-size:10px;font-weight:600;padding:3px 7px;border-radius:4px">${d}</div></td>`).join('')}
+          <td style="font-size:12px;font-weight:700;font-family:var(--mono)">${u}</td>
+        </tr>`).join('')}
+    </tbody>
+  </table>
+</div>`;}
+
+function renderCalc(){return`
+<div class="pill-tabs" id="calcTabs2">
+  <div class="pill-tab active" onclick="switchCalc2('load',this)">Beban Listrik</div>
+  <div class="pill-tab" onclick="switchCalc2('hvac',this)">HVAC / AC</div>
+  <div class="pill-tab" onclick="switchCalc2('solar',this)">Solar PV</div>
+  <div class="pill-tab" onclick="switchCalc2('pump',this)">Pompa</div>
+  <div class="pill-tab" onclick="switchCalc2('lux',this)">Iluminasi</div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:12px" id="calcTitle2">Parameter Beban Listrik</div>
+    <div id="calcInp2">
+      <div class="form-row"><div class="form-group"><label class="form-label">Luas Bangunan (m²)</label><input class="form-input" id="v2_area" type="number" value="5000"></div><div class="form-group"><label class="form-label">Fungsi Bangunan</label><select class="form-select" id="v2_type"><option value="25">Perkantoran (25 VA/m²)</option><option value="40">Pusat Perbelanjaan</option><option value="15">Apartemen</option><option value="60">Rumah Sakit</option><option value="50">Hotel</option></select></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Demand Factor (%)</label><input class="form-input" id="v2_df" type="number" value="75"></div><div class="form-group"><label class="form-label">Power Factor (cosφ)</label><input class="form-input" id="v2_pf" type="number" value="0.85" step="0.01"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Tegangan</label><select class="form-select" id="v2_volt"><option value="380">3Φ 380V LV</option><option value="20000">20kV MV</option></select></div><div class="form-group"><label class="form-label">Proyeksi Pertumbuhan (%)</label><input class="form-input" id="v2_grow" type="number" value="20"></div></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:6px" onclick="doCalc2()">Hitung Sekarang</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:12px">Hasil Kalkulasi</div>
+    <div id="calcRes2" style="background:var(--navy);border-radius:var(--r2);padding:14px;min-height:180px">
+      <div style="font-size:10px;font-weight:600;color:var(--steel2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Siap menghitung...</div>
+      <div style="font-size:12px;color:var(--steel);line-height:1.7">Masukkan parameter dan tekan Hitung untuk mendapatkan hasil perhitungan engineering sesuai standar SNI / IEC.</div>
+    </div>
+    <div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:var(--r);border:1px solid var(--border)">
+      <div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Standar</div>
+      <div style="font-size:11px;color:var(--text2)">SNI 0225:2020 · SNI 03-6197 · IEC 60364 · ASHRAE 90.1 · SNI 03-6575</div>
+    </div>
+  </div>
+</div>`;}
+
+let currentCalcType='load';
+function switchCalc2(t,el){
+  currentCalcType=t;
+  document.querySelectorAll('#calcTabs2 .pill-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  const titles={load:'Parameter Beban Listrik',hvac:'Parameter Beban HVAC',solar:'Parameter Solar PV',pump:'Parameter Pompa',lux:'Parameter Iluminasi'};
+  document.getElementById('calcTitle2').textContent=titles[t];
+  const forms={
+    load:`<div class="form-row"><div class="form-group"><label class="form-label">Luas Bangunan (m²)</label><input class="form-input" id="v2_area" type="number" value="5000"></div><div class="form-group"><label class="form-label">Fungsi Bangunan</label><select class="form-select" id="v2_type"><option value="25">Perkantoran (25 VA/m²)</option><option value="40">Pusat Perbelanjaan</option><option value="15">Apartemen</option><option value="60">Rumah Sakit</option><option value="50">Hotel</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Demand Factor (%)</label><input class="form-input" id="v2_df" type="number" value="75"></div><div class="form-group"><label class="form-label">Power Factor</label><input class="form-input" id="v2_pf" type="number" value="0.85" step="0.01"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Tegangan</label><select class="form-select" id="v2_volt"><option value="380">3Φ 380V</option><option value="20000">20kV</option></select></div><div class="form-group"><label class="form-label">Pertumbuhan (%)</label><input class="form-input" id="v2_grow" type="number" value="20"></div></div>`,
+    hvac:`<div class="form-row"><div class="form-group"><label class="form-label">Luas Area (m²)</label><input class="form-input" id="h2_area" type="number" value="1000"></div><div class="form-group"><label class="form-label">Tinggi Plafon (m)</label><input class="form-input" id="h2_height" type="number" value="3.5" step="0.5"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Suhu Luar (°C)</label><input class="form-input" id="h2_tout" type="number" value="34"></div><div class="form-group"><label class="form-label">Suhu Dalam (°C)</label><input class="form-input" id="h2_tin" type="number" value="24"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Jumlah Penghuni</label><input class="form-input" id="h2_occ" type="number" value="150"></div><div class="form-group"><label class="form-label">Tipe Ruang</label><select class="form-select"><option>Perkantoran</option><option>Konferensi</option><option>Ritel</option></select></div></div>`,
+    solar:`<div class="form-row"><div class="form-group"><label class="form-label">Kebutuhan (kWh/hari)</label><input class="form-input" id="s2_kwh" type="number" value="500"></div><div class="form-group"><label class="form-label">Peak Sun Hour (jam)</label><input class="form-input" id="s2_psh" type="number" value="5" step="0.5"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Efisiensi Panel (%)</label><input class="form-input" id="s2_eff" type="number" value="20"></div><div class="form-group"><label class="form-label">System Loss (%)</label><input class="form-input" id="s2_loss" type="number" value="15"></div></div><div class="form-group"><label class="form-label">Kapasitas Panel (Wp)</label><select class="form-select" id="s2_panel"><option value="400">400 Wp</option><option value="500">500 Wp</option><option value="550">550 Wp</option><option value="600">600 Wp</option></select></div>`,
+    pump:`<div class="form-row"><div class="form-group"><label class="form-label">Debit Q (m³/jam)</label><input class="form-input" id="p2_q" type="number" value="50"></div><div class="form-group"><label class="form-label">Head Statis (m)</label><input class="form-input" id="p2_hs" type="number" value="25"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Panjang Pipa (m)</label><input class="form-input" id="p2_len" type="number" value="100"></div><div class="form-group"><label class="form-label">Diameter Pipa</label><select class="form-select" id="p2_dia"><option value="100">DN 100</option><option value="150">DN 150</option><option value="200">DN 200</option></select></div></div><div class="form-group"><label class="form-label">Efisiensi Pompa (%)</label><input class="form-input" id="p2_eff" type="number" value="75"></div>`,
+    lux:`<div class="form-row"><div class="form-group"><label class="form-label">Luas Ruangan (m²)</label><input class="form-input" id="l2_area" type="number" value="200"></div><div class="form-group"><label class="form-label">Target Iluminasi (lux)</label><select class="form-select" id="l2_lux"><option value="300">300 lux — Perkantoran</option><option value="500">500 lux — Ruang Gambar</option><option value="150">150 lux — Koridor</option><option value="1000">1000 lux — Operasi RS</option></select></div></div><div class="form-row"><div class="form-group"><label class="form-label">Jenis Lampu</label><select class="form-select" id="l2_type"><option value="40,3000">LED Panel 40W (3000 lm)</option><option value="18,1400">LED Downlight 18W</option><option value="60,5200">LED Troffer 60W</option></select></div><div class="form-group"><label class="form-label">Faktor Utilisasi (cu)</label><input class="form-input" id="l2_cu" type="number" value="0.7" step="0.05"></div></div>`
+  };
+  document.getElementById('calcInp2').innerHTML=(forms[t]||'')+'<button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="doCalc2()">Hitung Sekarang</button>';
+  document.getElementById('calcRes2').innerHTML='<div style="font-size:10px;font-weight:600;color:var(--steel2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Siap menghitung...</div><div style="font-size:12px;color:var(--steel)">Sesuaikan parameter dan tekan Hitung.</div>';
+}
+
+function doCalc2(){
+  const t=currentCalcType;
+  let rows=[];
+  function row(k,v,hi=false){return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06)"><span style="font-size:11.5px;color:var(--steel2)">${k}</span><span style="font-size:12px;font-weight:600;font-family:var(--mono);color:${hi?'#00C9A7':'#fff'}">${v}</span></div>`;}
+  if(t==='load'){
+    const a=+(document.getElementById('v2_area')||{value:5000}).value;
+    const tv=+(document.getElementById('v2_type')||{value:25}).value;
+    const df=+(document.getElementById('v2_df')||{value:75}).value/100;
+    const pf=+(document.getElementById('v2_pf')||{value:0.85}).value;
+    const volt=+(document.getElementById('v2_volt')||{value:380}).value;
+    const grow=+(document.getElementById('v2_grow')||{value:20}).value/100;
+    const dem=a*tv*df;const kVA=dem/1000;const kW=dem*pf/1000;
+    const cur=volt===380?(dem/(Math.sqrt(3)*volt)).toFixed(1):(dem/volt).toFixed(1);
+    const sz=[100,160,200,250,315,400,500,630,800,1000,1250,1600];
+    const tr=sz.find(x=>x>=kVA*1.2)||sz[sz.length-1];
+    rows=[row('Beban Terpasang',(a*tv/1000).toFixed(1)+' kVA'),row('Beban Rencana',kVA.toFixed(1)+' kVA'),row('Beban Aktif (kW)',kW.toFixed(1)+' kW'),row('Arus Rencana',cur+' A'),row('Trafo Rekomendasi',tr+' kVA',true),row('Proyeksi 5 Tahun',(dem*(1+grow)/1000).toFixed(1)+' kVA')];
+  }else if(t==='hvac'){
+    const a=+(document.getElementById('h2_area')||{value:1000}).value;
+    const tout=+(document.getElementById('h2_tout')||{value:34}).value;
+    const tin=+(document.getElementById('h2_tin')||{value:24}).value;
+    const occ=+(document.getElementById('h2_occ')||{value:150}).value;
+    const c2=(a*(tout-tin)*45)/1000;const p=(occ*75)/1000;const eq=(a*15)/1000;const tot=c2+p+eq;
+    rows=[row('Beban Konduksi',c2.toFixed(1)+' kW'),row('Beban Penghuni',p.toFixed(1)+' kW'),row('Beban Peralatan',eq.toFixed(1)+' kW'),row('Total Beban',tot.toFixed(1)+' kW'),row('Kapasitas (TR)',(tot*0.2844).toFixed(1)+' TR',true),row('Kapasitas (kW)',tot.toFixed(1)+' kW')];
+  }else if(t==='solar'){
+    const kwh=+(document.getElementById('s2_kwh')||{value:500}).value;
+    const psh=+(document.getElementById('s2_psh')||{value:5}).value;
+    const loss=1-(+(document.getElementById('s2_loss')||{value:15}).value/100);
+    const wp=+(document.getElementById('s2_panel')||{value:400}).value;
+    const pv=kwh/(psh*loss);const n=Math.ceil(pv*1000/wp);const prod=n*wp*psh*loss/1000;
+    rows=[row('Kapasitas PV',pv.toFixed(1)+' kWp'),row('Jumlah Panel '+wp+'Wp',n+' pcs',true),row('Luas Area Panel',(n*1.96).toFixed(0)+' m²'),row('Produksi/Hari',prod.toFixed(0)+' kWh'),row('Produksi/Tahun',(prod*365/1000).toFixed(1)+' MWh'),row('Penghematan/Tahun','Rp '+(prod*365*1500).toLocaleString('id-ID'),true)];
+  }else if(t==='pump'){
+    const Q=+(document.getElementById('p2_q')||{value:50}).value;
+    const hs=+(document.getElementById('p2_hs')||{value:25}).value;
+    const len=+(document.getElementById('p2_len')||{value:100}).value;
+    const dia=+(document.getElementById('p2_dia')||{value:100}).value/1000;
+    const eff=+(document.getElementById('p2_eff')||{value:75}).value/100;
+    const A=Math.PI*(dia/2)**2;const v=(Q/3600)/A;
+    const hf=0.02*(len/dia)*(v**2)/(2*9.81);const H=hs+hf+5;
+    const Ph=(1000*9.81*(Q/3600)*H)/1000;const Ps=Ph/eff;
+    const ms=[0.55,0.75,1.1,1.5,2.2,3,4,5.5,7.5,11,15,18.5,22,30,37,45,55];
+    const mot=ms.find(x=>x>=Ps*1.25)||ms[ms.length-1];
+    rows=[row('Kec. Aliran',v.toFixed(2)+' m/s'),row('Head Gesek',hf.toFixed(1)+' m'),row('Total Head (TDH)',H.toFixed(1)+' m',true),row('Daya Hidraulik',Ph.toFixed(1)+' kW'),row('Daya Poros',Ps.toFixed(1)+' kW'),row('Motor Rekomendasi',mot+' kW',true)];
+  }else if(t==='lux'){
+    const a=+(document.getElementById('l2_area')||{value:200}).value;
+    const lux=+(document.getElementById('l2_lux')||{value:300}).value;
+    const cu=+(document.getElementById('l2_cu')||{value:0.7}).value;
+    const sel=(document.getElementById('l2_type')||{value:'40,3000'}).value.split(',');
+    const watt=+sel[0];const lm=+sel[1];
+    const n=Math.ceil((lux*a)/(lm*cu*0.8));const tw=n*watt;const lpd=(tw/a).toFixed(1);
+    rows=[row('Target Iluminasi',lux+' lux'),row('Jumlah Titik Lampu',n+' titik',true),row('Total Daya',tw+' W'),row('LPD (W/m²)',lpd,true),row('Konsumsi/Hari (10h)',(tw*10/1000).toFixed(1)+' kWh'),row('Status SNI 03-6575',lpd<=15?'Efisien ✓':'Melebihi Batas !')];
+  }
+  document.getElementById('calcRes2').innerHTML='<div style="font-size:10px;font-weight:600;color:var(--steel2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">Hasil Perhitungan</div>'+rows.join('');
+}
+
+function renderDocs(){return`
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+  <div style="display:flex;gap:6px"><div class="filter-chip active">Semua</div><div class="filter-chip">Gambar</div><div class="filter-chip">Laporan</div><div class="filter-chip">Spesifikasi</div></div>
+  <button class="btn btn-primary btn-sm" onclick="showToast('Dialog upload terbuka')">↑ Upload Dokumen</button>
+</div>
+<div class="card" style="padding:0;overflow:hidden">
+  <table class="data-table">
+    <thead><tr><th>Nama File</th><th>Proyek</th><th>Jenis</th><th>Upload oleh</th><th>Tanggal</th><th>Ukuran</th><th>Rev.</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      ${[
+        ['DWG','var(--blue4)','var(--blue)','SD-M-001_HVAC_Layout_L15-20.dwg','Sudirman Tower','Drawing','Ir. Budi S.','17 Mar 25','14.2 MB','3','Approved','badge-green'],
+        ['PDF','var(--danger-bg)','var(--danger)','RPT-E-042_Commissioning_Solar_MM2100.pdf','Solar MM2100','Report','Ir. Dewi A.','16 Mar 25','8.7 MB','Final','Final','badge-green'],
+        ['XLS','var(--success-bg)','var(--success)','CALC-M-015_Load_Calculation_RSUD.xlsx','RSUD Surabaya','Calculation','Ir. Anton H.','15 Mar 25','2.1 MB','1','Review','badge-amber'],
+        ['PDF','var(--blue4)','var(--blue)','SPEC-E-008_SLD_Karawang_Ph2.pdf','Karawang Phase 2','Spec','Ir. Dewi A.','14 Mar 25','5.3 MB','2','IFC','badge-blue'],
+        ['DOC','var(--silver)','var(--steel)','RFI-034_Response_RSUD_Surabaya.docx','RSUD Surabaya','RFI','Ir. Anton H.','13 Mar 25','0.8 MB','Draft','Draft','badge-gray']
+      ].map(([ext,bg,fg,name,proj,type,pic,date,size,rev,stat,sbadge])=>`
+        <tr>
+          <td><div style="display:flex;align-items:center;gap:7px"><div style="width:28px;height:28px;border-radius:var(--r);background:${bg};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${fg};flex-shrink:0">${ext}</div><div style="font-size:11.5px;font-weight:500">${name}</div></div></td>
+          <td style="font-size:11px">${proj}</td><td><span class="badge badge-blue" style="font-size:10px">${type}</span></td>
+          <td style="font-size:11px">${pic}</td><td style="font-family:var(--mono);font-size:11px">${date}</td>
+          <td style="font-family:var(--mono);font-size:11px">${size}</td><td style="font-family:var(--mono);font-size:11px;text-align:center">${rev}</td>
+          <td><span class="badge ${sbadge}">${stat}</span></td>
+          <td><button class="btn btn-ghost btn-xs" onclick="showToast('File diunduh')">↓</button></td>
+        </tr>`).join('')}
+    </tbody>
+  </table>
+</div>`;}
+
+function renderRisk(){return`
+<div class="g2" style="margin-bottom:14px">
+  <div class="card">
+    <div class="card-header"><div class="card-title">Risk Matrix</div></div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:8px">↑ Dampak vs Kemungkinan →</div>
+    <div style="display:grid;grid-template-columns:28px repeat(5,1fr);gap:2px">
+      <div style="font-size:8px;color:var(--text3);display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg)">S.Tinggi</div>
+      <div class="risk-cell rc-med"></div><div class="risk-cell rc-hi">R1</div><div class="risk-cell rc-cr">R2</div><div class="risk-cell rc-cr"></div><div class="risk-cell rc-cr"></div>
+      <div style="font-size:8px;color:var(--text3);display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg)">Tinggi</div>
+      <div class="risk-cell rc-low"></div><div class="risk-cell rc-med">R3</div><div class="risk-cell rc-hi"></div><div class="risk-cell rc-cr">R4</div><div class="risk-cell rc-cr"></div>
+      <div style="font-size:8px;color:var(--text3);display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg)">Sedang</div>
+      <div class="risk-cell rc-low"></div><div class="risk-cell rc-low"></div><div class="risk-cell rc-med">R5</div><div class="risk-cell rc-hi"></div><div class="risk-cell rc-cr"></div>
+      <div style="font-size:8px;color:var(--text3);display:flex;align-items:center;justify-content:center;writing-mode:vertical-lr;transform:rotate(180deg)">Rendah</div>
+      <div class="risk-cell rc-low">R6</div><div class="risk-cell rc-low"></div><div class="risk-cell rc-low"></div><div class="risk-cell rc-med"></div><div class="risk-cell rc-hi"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Ringkasan Risiko</div></div>
+    <div class="g2">
+      <div style="text-align:center;padding:12px;background:var(--danger-bg);border-radius:var(--r)"><div style="font-size:24px;font-weight:700;color:var(--danger);font-family:var(--mono)">2</div><div style="font-size:10.5px;color:var(--danger)">Critical</div></div>
+      <div style="text-align:center;padding:12px;background:#FFF0EC;border-radius:var(--r)"><div style="font-size:24px;font-weight:700;color:var(--accent2);font-family:var(--mono)">2</div><div style="font-size:10.5px;color:var(--accent2)">High</div></div>
+      <div style="text-align:center;padding:12px;background:var(--warning-bg);border-radius:var(--r)"><div style="font-size:24px;font-weight:700;color:var(--warning);font-family:var(--mono)">1</div><div style="font-size:10.5px;color:var(--warning)">Medium</div></div>
+      <div style="text-align:center;padding:12px;background:var(--success-bg);border-radius:var(--r)"><div style="font-size:24px;font-weight:700;color:var(--success);font-family:var(--mono)">1</div><div style="font-size:10.5px;color:var(--success)">Low</div></div>
+    </div>
+  </div>
+</div>
+<div class="card" style="padding:0;overflow:hidden">
+  <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+    <div class="card-title">Risk Register</div><button class="btn btn-primary btn-sm" onclick="showToast('Form tambah risiko terbuka')">+ Tambah Risiko</button>
+  </div>
+  <table class="data-table">
+    <thead><tr><th>ID</th><th>Deskripsi Risiko</th><th>Proyek</th><th>Level</th><th>Mitigasi</th><th>Owner</th></tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--mono);font-size:11px">R1</td><td style="font-size:11.5px">Keterlambatan material chiller impor</td><td style="font-size:11px">Sudirman</td><td><span class="badge badge-red">Critical</span></td><td style="font-size:11px">Alternative supplier lokal siap</td><td style="font-size:11px">Ir. Budi S.</td></tr>
+      <tr><td style="font-family:var(--mono);font-size:11px">R2</td><td style="font-size:11.5px">Scope creep perubahan desain arsitek</td><td style="font-size:11px">RSUD Sby</td><td><span class="badge badge-red">Critical</span></td><td style="font-size:11px">Change order management ketat</td><td style="font-size:11px">Ir. Anton H.</td></tr>
+      <tr><td style="font-family:var(--mono);font-size:11px">R3</td><td style="font-size:11.5px">Kenaikan harga material tembaga</td><td style="font-size:11px">Karawang</td><td><span class="badge badge-amber">High</span></td><td style="font-size:11px">Eskalasi harga di kontrak</td><td style="font-size:11px">Ir. Dewi A.</td></tr>
+      <tr><td style="font-family:var(--mono);font-size:11px">R4</td><td style="font-size:11.5px">Cuaca ekstrem pekerjaan atap</td><td style="font-size:11px">Bali Resort</td><td><span class="badge badge-amber">High</span></td><td style="font-size:11px">Float 14 hari di schedule</td><td style="font-size:11px">Ir. Sarah W.</td></tr>
+      <tr><td style="font-family:var(--mono);font-size:11px">R5</td><td style="font-size:11.5px">Koordinasi MEP vs subkon sipil</td><td style="font-size:11px">Meikarta</td><td><span class="badge badge-amber">Med</span></td><td style="font-size:11px">Weekly coordination meeting</td><td style="font-size:11px">Ir. Fajar N.</td></tr>
+      <tr><td style="font-family:var(--mono);font-size:11px">R6</td><td style="font-size:11.5px">Kecelakaan saat instalasi panel MDB</td><td style="font-size:11px">Karawang</td><td><span class="badge badge-green">Low</span></td><td style="font-size:11px">SOP K3 & APD lengkap</td><td style="font-size:11px">HSE Officer</td></tr>
+    </tbody>
+  </table>
+</div>`;}
+
+function renderAnalytics(){return`
+<div class="g5" style="margin-bottom:14px">
+  <div class="kpi-card blue"><div class="kpi-label">Kontrak YTD</div><div class="kpi-value">47.3M</div><div class="kpi-sub"><span class="kpi-up">↑23.4%</span></div></div>
+  <div class="kpi-card green"><div class="kpi-label">Utilisasi Tim</div><div class="kpi-value">84%</div><div class="kpi-sub"><span class="kpi-up">↑8%</span></div></div>
+  <div class="kpi-card amber"><div class="kpi-label">OTD Rate</div><div class="kpi-value">91%</div><div class="kpi-sub"><span class="kpi-dn">↓3% target</span></div></div>
+  <div class="kpi-card blue"><div class="kpi-label">CSAT Score</div><div class="kpi-value">4.7</div><div class="kpi-sub"><span class="kpi-up">↑0.3 pts</span></div></div>
+  <div class="kpi-card green"><div class="kpi-label">Profit Margin</div><div class="kpi-value">18.2%</div><div class="kpi-sub"><span class="kpi-up">↑2.1% YoY</span></div></div>
+</div>
+<div class="g2">
+  <div class="card">
+    <div class="card-header"><div class="card-title">KPI Operasional</div></div>
+    <div class="metric-row"><span class="metric-label">Rata-rata durasi proyek</span><span class="metric-val">7.2 bulan</span></div>
+    <div class="metric-row"><span class="metric-label">Nilai kontrak rata-rata</span><span class="metric-val">Rp 3.94M</span></div>
+    <div class="metric-row"><span class="metric-label">Proyek per engineer</span><span class="metric-val">2.4</span></div>
+    <div class="metric-row"><span class="metric-label">Repeat client rate</span><span class="metric-val" style="color:var(--success)">68%</span></div>
+    <div class="metric-row"><span class="metric-label">Win rate tender</span><span class="metric-val" style="color:var(--success)">54%</span></div>
+    <div class="metric-row"><span class="metric-label">Avg. CPI semua proyek</span><span class="metric-val" style="color:var(--success)">1.04</span></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Segmen Proyek</div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+      ${[['High-rise Building','38%',38],['Industrial','27%',27],['Healthcare','18%',18],['Hospitality','11%',11],['Renewable Energy','6%',6]].map(([l,p,w])=>`
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px"><span style="color:var(--text2)">${l}</span><span style="font-weight:600;font-family:var(--mono)">${p}</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:${w}%"></div></div>
+        </div>`).join('')}
+    </div>
+  </div>
+</div>`;}
+
+function filterProj(type,el){
+  document.querySelectorAll('[onclick*=filterProj]').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  const rows=document.querySelectorAll('#projTable tbody tr');
+  rows.forEach(r=>r.style.display=(type==='all'||r.dataset.type===type)?'':'none');
+}
+function toggleCheck(item){
+  const box=item.querySelector('.check-box');
+  const txt=item.querySelector('.check-text');
+  const done=!box.classList.contains('done');
+  box.classList.toggle('done',done);
+  box.innerHTML=done?'<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>':'';
+  txt.classList.toggle('done',done);
+}
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open');}
+function openNewProject(){document.getElementById('newProjectModal').style.display='flex';}
+function openInvoice(){document.getElementById('invoiceModal').style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+function saveNewProject(){closeModal('newProjectModal');showToast('Proyek baru berhasil dibuat! ✓');}
+function handleCTA(){
+  const t=document.getElementById('ctaBtn').textContent;
+  if(t.includes('Proyek'))openNewProject();
+  else if(t.includes('Invoice'))openInvoice();
+  else showToast('Fitur tersedia');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#notifPanel')&&!e.target.closest('.icon-btn'))
+    document.getElementById('notifPanel').classList.remove('open');
+});
+
+go('dashboard',document.querySelector('.nav-item.active'));
+</script>
+</body>
+</html>
